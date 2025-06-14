@@ -1,163 +1,172 @@
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
-import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
 
         //Dados de exemplo ao final do código, descomente para testar. Linha 163
+        
 
-        Scanner sc = new Scanner(System.in);
-        sc.useLocale(Locale.US); //usar ponto como separador decimal
         List<Pessoa> pessoas = new ArrayList<>();
         List<CarteiraInvestimento> carteiras = new ArrayList<>();
 
         while (true) {
-            System.out.println("\n      --- Investe Mais ---\n--- Sistema de Investimentos ---\n\n");
-            System.out.println("1. Cadastrar Pessoa Física");
-            System.out.println("2. Cadastrar Pessoa Jurídica");
-            System.out.println("3. Criar Carteira de Investimento");
-            System.out.println("4. Adicionar Investimento à Carteira");
-            System.out.println("5. Simular Passagem de Meses");
-            System.out.println("6. Exibir Carteiras e Investimentos");
-            System.out.println("0. Sair");
-            System.out.print("Escolha uma opção: ");
-            int op = sc.nextInt();
-            sc.nextLine();
+            int op = Integer.parseInt(JOptionPane.showInputDialog("      --- Investe Mais ---\n--- Sistema de Investimentos ---\n\n"
+                    +"Escolha uma opção:\n\n" +
+                    "1. Cadastrar Pessoa Física\n" +
+                    "2. Cadastrar Pessoa Jurídica\n" +
+                    "3. Criar Carteira de Investimento\n" +
+                    "4. Adicionar Investimento à Carteira\n" +
+                    "5. Simular Passagem de Meses\n" +
+                    "6. Exibir Carteiras e Investimentos\n" +
+                    "0. Sair"));
 
             if (op == 0) break;
 
             switch (op) {
                 case 1:
-                    System.out.print("Nome: ");
-                    String nomePF = sc.nextLine();
-                    System.out.print("Email: ");
-                    String emailPF = sc.nextLine();
-                    System.out.print("CPF: ");
-                    String cpf = sc.nextLine();
+                    String nomePF = JOptionPane.showInputDialog("Nome da Pessoa Física:");
+                    String emailPF = JOptionPane.showInputDialog("Email da Pessoa Física:");
+                    String cpf = JOptionPane.showInputDialog("CPF da Pessoa Física:");
                     pessoas.add(new PessoaFisica(nomePF, emailPF, cpf));
-                    System.out.println("Pessoa Física cadastrada!");
+                    JOptionPane.showMessageDialog(null, "Pessoa Física cadastrada com sucesso!", "Cadastro", JOptionPane.INFORMATION_MESSAGE);
                     break;
+
                 case 2:
-                    System.out.print("Nome: ");
-                    String nomePJ = sc.nextLine();
-                    System.out.print("Email: ");
-                    String emailPJ = sc.nextLine();
-                    System.out.print("CNPJ: ");
-                    String cnpj = sc.nextLine();
+                    String nomePJ = JOptionPane.showInputDialog("Nome da Pessoa Jurídica:");
+                    String emailPJ = JOptionPane.showInputDialog("Email da Pessoa Jurídica:");
+                    String cnpj = JOptionPane.showInputDialog("CNPJ da Pessoa Jurídica:");
                     pessoas.add(new PessoaJuridica(nomePJ, emailPJ, cnpj));
-                    System.out.println("Pessoa Jurídica cadastrada!");
+                    JOptionPane.showMessageDialog(null, "Pessoa Jurídica cadastrada com sucesso!", "Cadastro", JOptionPane.INFORMATION_MESSAGE);
                     break;
+
                 case 3:
                     if (pessoas.isEmpty()) {
-                        System.out.println("Nenhum cadastro encontrado.");
+                        JOptionPane.showMessageDialog(null, "Nenhum cadastro encontrado.", "Erro", JOptionPane.ERROR_MESSAGE);
                         break;
                     }
-                    for (int i = 0; i < pessoas.size(); i++)
-                        System.out.println(i + " - " + pessoas.get(i).getNome());
-                    System.out.print("Insira o número referente a pessoa: ");
-                    int idxPessoa = sc.nextInt();
-                    sc.nextLine();
-                    carteiras.add(new CarteiraInvestimento(pessoas.get(idxPessoa)));
-                    System.out.println("Carteira criada!");
+
+                    StringBuilder listaPessoas = new StringBuilder("Escolha a pessoa:\n");
+                    for (int i = 0; i < pessoas.size(); i++) {
+                        listaPessoas.append(i).append(" - ").append(pessoas.get(i).getNome()).append("\n");
+                    }
+                    String input = JOptionPane.showInputDialog(null, listaPessoas.toString(), "Selecionar Pessoa", JOptionPane.QUESTION_MESSAGE);
+
+                    if (input != null) {
+                        try {
+                            int idxPessoa = Integer.parseInt(input.trim());
+                            carteiras.add(new CarteiraInvestimento(pessoas.get(idxPessoa)));
+                            JOptionPane.showMessageDialog(null, "Carteira criada!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+                        } catch (Exception e) {
+                            JOptionPane.showMessageDialog(null, "Entrada inválida.", "Erro", JOptionPane.ERROR_MESSAGE);
+                        }
+                    }
                     break;
+
                 case 4:
                     if (carteiras.isEmpty()) {
-                        System.out.println("Nenhuma carteira encontrada.");
+                        JOptionPane.showMessageDialog(null, "Nenhuma carteira encontrada.", "Erro", JOptionPane.ERROR_MESSAGE);
                         break;
                     }
-                    for (int i = 0; i < carteiras.size(); i++)
-                        System.out.println(i + " - " + carteiras.get(i).getInvestimentos().size() + " investimentos - " + carteiras.get(i).getPessoa().getNome());
-                    System.out.print("Insira o número referente a carteira: ");
-                    int idxCart = sc.nextInt();
-                    sc.nextLine();
-                    CarteiraInvestimento carteira = carteiras.get(idxCart);
-                    Pessoa pessoa = carteira.getPessoa();
-                    System.out.println("Tipos: 1-Tesouro    2-Ação    3-Fundo    4-Debenture");
-                    int tipo = sc.nextInt();
-                    sc.nextLine();
+                    StringBuilder listaCarteiras = new StringBuilder("Escolha a carteira:\n");
+                    for (int i = 0; i < carteiras.size(); i++) {
+                        listaCarteiras.append(i)
+                                .append(" - ")
+                                .append(carteiras.get(i).getInvestimentos().size())
+                                .append(" investimentos - ")
+                                .append(carteiras.get(i).getPessoa().getNome())
+                                .append("\n");
+                    }
+                    String inputCart = JOptionPane.showInputDialog(null, listaCarteiras.toString(), "Selecionar Carteira", JOptionPane.QUESTION_MESSAGE);
+                    if (inputCart == null) break;
                     try {
+                        int idxCart = Integer.parseInt(inputCart.trim());
+                        CarteiraInvestimento carteira = carteiras.get(idxCart);
+                        Pessoa pessoa = carteira.getPessoa();
+
+                        String tipoStr = JOptionPane.showInputDialog(null, "Tipos:\n1-Tesouro\n2-Ação\n3-Fundo\n4-Debenture\n\nDigite o número do tipo:", "Tipo de Investimento", JOptionPane.QUESTION_MESSAGE);
+                        if (tipoStr == null) break;
+                        int tipo = Integer.parseInt(tipoStr.trim());
+
                         switch (tipo) {
-                            case 1:
-                                System.out.print("Saldo inicial: ");
-                                double saldoT = sc.nextDouble();
-                                sc.nextLine();
-                                System.out.print("Nome título: ");
-                                String nomeT = sc.nextLine();
-                                System.out.print("Taxa anual: ");
-                                double taxaT = sc.nextDouble();
-                                sc.nextLine();
+                            case 1: {
+                                double saldoT = Double.parseDouble(JOptionPane.showInputDialog("Saldo inicial:"));
+                                String nomeT = JOptionPane.showInputDialog("Nome título:");
+                                double taxaT = Double.parseDouble(JOptionPane.showInputDialog("Taxa anual (ex: 0.05 para 5%):"));
                                 carteira.adicionarInvestimento(new TesouroPrefixado(pessoa, saldoT, nomeT, taxaT));
                                 break;
-                            case 2:
-                                System.out.print("Saldo inicial: ");
-                                double saldoA = sc.nextDouble();
-                                sc.nextLine();
-                                System.out.print("Código ação: ");
-                                String codA = sc.nextLine();
-                                System.out.print("Nome empresa: ");
-                                String nomeA = sc.nextLine();
-                                System.out.print("Preço unitário: ");
-                                double precoA = sc.nextDouble();
-                                sc.nextLine();
+                            }
+                            case 2: {
+                                double saldoA = Double.parseDouble(JOptionPane.showInputDialog("Saldo inicial:"));
+                                String codA = JOptionPane.showInputDialog("Código ação:");
+                                String nomeA = JOptionPane.showInputDialog("Nome empresa:");
+                                double precoA = Double.parseDouble(JOptionPane.showInputDialog("Preço unitário:"));
                                 carteira.adicionarInvestimento(new AcaoBolsa(pessoa, saldoA, codA, nomeA, precoA));
                                 break;
-                            case 3:
-                                System.out.print("Saldo inicial: ");
-                                double saldoF = sc.nextDouble();
-                                sc.nextLine();
-                                System.out.print("Nome fundo: ");
-                                String nomeF = sc.nextLine();
-                                System.out.print("CNPJ gestora: ");
-                                String cnpjF = sc.nextLine();
-                                System.out.print("Taxa adm anual: ");
-                                double taxaF = sc.nextDouble();
-                                sc.nextLine();
+                            }
+                            case 3: {
+                                double saldoF = Double.parseDouble(JOptionPane.showInputDialog("Saldo inicial:"));
+                                String nomeF = JOptionPane.showInputDialog("Nome fundo:");
+                                String cnpjF = JOptionPane.showInputDialog("CNPJ gestora:");
+                                double taxaF = Double.parseDouble(JOptionPane.showInputDialog("Taxa adm anual (ex: 0.01 para 1%):"));
                                 carteira.adicionarInvestimento(new FundoInvestimento(pessoa, saldoF, nomeF, cnpjF, taxaF));
                                 break;
-                            case 4:
-                                System.out.print("Saldo inicial: ");
-                                double saldoD = sc.nextDouble();
-                                sc.nextLine();
-                                System.out.print("Nome empresa emissora: ");
-                                String nomeD = sc.nextLine();
-                                System.out.print("Taxa juros anual: ");
-                                double taxaD = sc.nextDouble();
-                                System.out.print("Percentual tributação PJ: ");
-                                double tribD = sc.nextDouble();
-                                sc.nextLine();
+                            }
+                            case 4: {
+                                double saldoD = Double.parseDouble(JOptionPane.showInputDialog("Saldo inicial:"));
+                                String nomeD = JOptionPane.showInputDialog("Nome empresa emissora:");
+                                double taxaD = Double.parseDouble(JOptionPane.showInputDialog("Taxa juros anual (ex: 0.09 para 9%):"));
+                                double tribD = Double.parseDouble(JOptionPane.showInputDialog("Percentual tributação PJ (ex: 0.13 para 13%):"));
                                 carteira.adicionarInvestimento(new Debenture(pessoa, saldoD, nomeD, taxaD, tribD));
                                 break;
+                            }
+                            default:
+                                JOptionPane.showMessageDialog(null, "Tipo inválido.", "Erro", JOptionPane.ERROR_MESSAGE);
+                                break;
                         }
-                        System.out.println("Investimento adicionado!");
+                        JOptionPane.showMessageDialog(null, "Investimento adicionado!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
                     } catch (Exception e) {
-                        System.out.println("Erro: " + e.getMessage());
+                        JOptionPane.showMessageDialog(null, "Erro: " + e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
                     }
                     break;
-                case 5:
-                    System.out.print("Quantos meses simular? ");
-                    int meses = sc.nextInt();
-                    sc.nextLine();
-                    for (CarteiraInvestimento c : carteiras)
-                        for (int m = 0; m < meses; m++)
-                            c.simularMes();
-                    System.out.println("Simulação concluída.");
+
+                case 5: {
+                    String mesesStr = JOptionPane.showInputDialog(null, "Quantos meses simular?", "Simulação", JOptionPane.QUESTION_MESSAGE);
+                    if (mesesStr == null) break;
+                    try {
+                        int meses = Integer.parseInt(mesesStr.trim());
+                        for (CarteiraInvestimento c : carteiras)
+                            for (int m = 0; m < meses; m++)
+                                c.simularMes();
+                        JOptionPane.showMessageDialog(null, "Simulação concluída.\nResultado disponivel no menu 6 - Exibir Carteiras", "Simulação", JOptionPane.INFORMATION_MESSAGE);
+                    } catch (Exception e) {
+                        JOptionPane.showMessageDialog(null, "Entrada inválida.", "Erro", JOptionPane.ERROR_MESSAGE);
+                    }
                     break;
-                case 6:
+                }
+                case 6: {
+                    if (carteiras.isEmpty()) {
+                        JOptionPane.showMessageDialog(null, "Nenhuma carteira encontrada.", "Erro", JOptionPane.ERROR_MESSAGE);
+                        break;
+                    }
+                    StringBuilder sb = new StringBuilder();
                     for (CarteiraInvestimento c : carteiras) {
-                        System.out.println("\nCarteira de: " + c.getPessoa().getNome());
+                        sb.append("\nCarteira de: ").append(c.getPessoa().getNome()).append("\n");
                         for (Investimento i : c.getInvestimentos())
-                            System.out.printf("%s: R$ %.2f\n", i.getClass().getSimpleName(), i.getSaldo());
-                        System.out.printf("Total: R$ %.2f\n", c.calcularValorTotalInvestido());
+                            sb.append(String.format("%s: R$ %.2f\n", i.getClass().getSimpleName(), i.getSaldo()));
+                        sb.append(String.format("Total: R$ %.2f\n", c.calcularValorTotalInvestido()));
                     }
+                    JOptionPane.showMessageDialog(null, sb.toString(), "Carteiras e Investimentos", JOptionPane.INFORMATION_MESSAGE);
                     break;
+                }
                 default:
-                    System.out.println("Opção inválida.");
+                    JOptionPane.showMessageDialog(null, "Opção inválida.", "Erro", JOptionPane.ERROR_MESSAGE);
+
+        JOptionPane.showMessageDialog(null, "Programa finalizado.", "Saída", JOptionPane.INFORMATION_MESSAGE);
+                    return;
             }
         }
-        sc.close();
-        System.out.println("Programa encerrado.");
     }
 }
 
